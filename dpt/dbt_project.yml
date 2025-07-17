@@ -1,0 +1,23 @@
+name: 'telegram_data_pipeline'
+version: '1.0.0'
+config-version: 2
+profile: 'telegram_data_pipeline'
+
+model-paths: ["/app/models"]
+analysis-paths: ["/app/analyses"]
+test-paths: ["/app/tests"]
+seed-paths: ["/app/seeds"]
+macro-paths: ["/app/macros"]
+snapshot-paths: ["/app/snapshots"]
+
+target-path: "/app/target"
+clean-targets:
+  - "/app/target"
+  - "/app/dbt_packages"
+
+models:
+  telegram_data_pipeline:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table

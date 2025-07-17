@@ -4,11 +4,9 @@ dbt-core
 dbt-postgres
 dagster
 dagster-postgres
-ultralytics
+# ultralytics
 fastapi
 uvicorn
 python-dotenv
 psycopg2-binary
 tqdm
-sqlalchemy
-dagster-webserver
