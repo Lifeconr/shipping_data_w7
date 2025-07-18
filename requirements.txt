@@ -4,7 +4,7 @@ dbt-core
 dbt-postgres
 dagster
 dagster-postgres
-# ultralytics
+ultralytics
 fastapi
 uvicorn
 python-dotenv

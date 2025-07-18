@@ -1,0 +1,71 @@
+models:
+  - name: dim_channels
+    columns:
+      - name: channel_id
+        tests:
+          - unique
+          - not_null
+  - name: dim_dates
+    columns:
+      - name: date_id
+        tests:
+          - unique
+          - not_null
+  - name: fct_messages
+    columns:
+      - name: message_id
+        tests:
+          - unique
+          - not_null
+      - name: channel_id
+        tests:
+          - relationships:
+              to: ref('dim_channels')
+              field: channel_id
+      - name: date_id
+        tests:
+          - relationships:
+              to: ref('dim_dates')
+              field: date_id
+    tests:
+      - no_future_dates:
+          column_name: date_id
+          max_date: "{{ current_date() }}"
+  - name: fct_image_detections
+    columns:
+      - name: detection_id
+        tests:
+          - unique
+          - not_null
+      - name: message_id
+        tests:
+          - relationships:
+              to: ref('fct_messages')
+              field: message_id
+      - name: confidence_score
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0.0, 1.0]
+              inclusive: true
+    tests:
+      - valid_confidence_range:
+          column_name: confidence_score
+          min_value: 0.5
+          max_value: 1.0
+
+tests:
+  - name: no_future_dates
+    description: Ensure no messages have dates in the future
+    query: |
+      SELECT *
+      FROM {{ ref('fct_messages') }}
+      WHERE {{ column_name }} > {{ max_date }}
+    severity: ERROR
+  - name: valid_confidence_range
+    description: Ensure confidence scores are between 0.5 and 1.0
+    query: |
+      SELECT *
+      FROM {{ ref('fct_image_detections') }}
+      WHERE {{ column_name }} < {{ min_value }} OR {{ column_name }} > {{ max_value }}
+    severity: ERROR

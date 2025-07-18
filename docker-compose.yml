@@ -4,27 +4,29 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - .:/app
       - ./data:/app/data
       - ./logs:/app/logs
+      - .:/app
     environment:
       - PYTHONPATH=/app
     depends_on:
-      - db
-    command: ["python", "src/api/main.py"]
+      db:
+        condition: service_healthy
+    command: ["tail", "-f", "/dev/null"]  # Keep container running
   api:
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - .:/app
       - ./data:/app/data
       - ./logs:/app/logs
+      - .:/app
     ports:
       - "8000:8000"
     command: ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
     depends_on:
-      - db
+      db:
+        condition: service_healthy
   db:
     image: postgres:15
     environment:
@@ -35,5 +37,10 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 volumes:
   postgres_data:

@@ -11,10 +11,10 @@ import re
 
 # Setup logging
 logging.basicConfig(
-    filename='logs/telegram_scraper.log',
+    filename='/app/logs/telegram_scraper.log',
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[logging.FileHandler('logs/telegram_scraper.log'), logging.StreamHandler()]
+    handlers=[logging.FileHandler('/app/logs/telegram_scraper.log'), logging.StreamHandler()]
 )
 logger = logging.getLogger(__name__)
 

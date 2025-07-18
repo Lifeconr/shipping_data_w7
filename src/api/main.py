@@ -4,13 +4,13 @@ from fastapi import FastAPI
 import logging
 import asyncio
 from pathlib import Path
-from src.scraping import telegram_scraper  # Import scraper main function
+from src.scraping.telegram_scraper import main as scraper_main
 
 logging.basicConfig(
-    filename='logs/api.log',
+    filename='/app/logs/api.log',
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[logging.FileHandler('logs/api.log'), logging.StreamHandler()]
+    handlers=[logging.FileHandler('/app/logs/api.log'), logging.StreamHandler()]
 )
 logger = logging.getLogger(__name__)
 
@@ -30,10 +30,10 @@ async def get_status():
 async def trigger_scrape():
     logger.info("Triggering Telegram scrape")
     try:
-        await telegram_scraper.main()
+        await scraper_main()
         return {"message": "Scraping completed successfully"}
     except Exception as e:
-        logger.error(f"Scraping error: {str(e)}")
+        logger.error(f"Scaping error: {str(e)}")
         return {"message": f"Scraping failed: {str(e)}"}
 
 @app.get("/messages/{date}/{channel}")
